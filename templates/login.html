@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+<div class="card w-50 mt-5 p-5 mx-auto">
+    <h1 class="mb-5">Login</h1>
+
+    <h2>{{ error_text }}</h2>
+
+    <form action="/login" method="post">
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" name="teacher-password" id="password">
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
