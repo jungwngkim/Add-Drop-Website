@@ -42,7 +42,7 @@ def send_email(student: Student, email_type: EmailType):
                     content='Registration Success',
                     student_description=student_description
                 )
-            case EmailType.ONe_FIRST:
+            case EmailType.ON_FIRST:
                 message = message_template.format(
                     sender_email=globals.google_id,
                     subject='Enter Office',
