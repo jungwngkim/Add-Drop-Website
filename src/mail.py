@@ -47,7 +47,7 @@ def send_email(student: Student, email_type: EmailType):
                     sender_email=globals.google_id,
                     subject='Enter Office',
                     content='Enter Office',
-                    student_dscription=student_description
+                    student_description=student_description
                 )
             case EmailType.ON_FIFTH:
                 message = message_template.format(

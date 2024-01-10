@@ -1,2 +1,3 @@
 .venv/
 ignore
+.DS_Store
