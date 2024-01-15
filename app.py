@@ -44,7 +44,7 @@ def register():
             return render_template("register.html", error_text="Already Registered")
 
         globals.waiting_list.append(new_student)
-        send_email(new_student, EmailType.ON_REGISTER)
+        send_email(new_student, EmailType.ON_REGISTER, 'Successful Registration')
 
         return redirect(url_for("waiting_list_screen"))
 
@@ -52,9 +52,11 @@ def register():
 @app.route("/waiting-list-screen")
 @server_open_required
 def waiting_list_screen():
+    print(globals.waiting_list[globals.current_index:])
     return render_template(
         'waiting_list.html',
         waiting_list=globals.waiting_list[globals.current_index:],
+        priority_list=globals.priority_list,
         current_index=0,
     )
 
@@ -67,14 +69,16 @@ def login():
     else:
         password = request.form['teacher-password']
 
-        print(password, globals.password)
+        if password in globals.password:
+            index = globals.password.index(password)
+            new_session = secrets.token_hex(32)
 
-        if password == globals.password:
-            globals.session = secrets.token_hex(32)
-            print(f'new session: {globals.session}')
+            globals.session[index] = new_session
+
+            print(f'new session: {new_session}')
 
             res = make_response(redirect(url_for('admin')))
-            res.set_cookie(globals.session_key, globals.session)
+            res.set_cookie(globals.session_key, new_session)
             return res
         else:
             return render_template('login.html', error_text='Wrong Password')
@@ -86,8 +90,10 @@ def admin():
     return render_template(
         "admin.html",
         waiting_list=globals.waiting_list,
+        priority_list=globals.priority_list,
         current_index=globals.current_index,
         is_open=globals.server_is_open,
+        admin=True,
     )
 
 
@@ -100,11 +106,11 @@ def next_student():
         globals.current_index += 1
 
         # send email to first student
-        send_email(globals.waiting_list[globals.current_index], EmailType.ON_FIRST)
+        send_email(globals.waiting_list[globals.current_index], EmailType.ON_FIRST, 'You are in First place in waiting line.')
 
-        # send email to fifth student, if exists
-        if globals.current_index + 4 <= max_index:
-            send_email(globals.waiting_list[globals.current_index + 4], EmailType.ON_FIFTH)
+        # send email to tenth student, if exists
+        if globals.current_index + 9 <= max_index:
+            send_email(globals.waiting_list[globals.current_index + 9], EmailType.ON_TENTH, 'You are in Tenth place in waiting line.')
 
     return redirect(url_for("admin"))
 
@@ -126,6 +132,42 @@ def delete_visited_student():
 
     return redirect(url_for("admin"))
 
+@app.route("/delete_student")
+@login_required
+def delete_student():
+    student_index = int(request.args.get('student_index'))
+
+    if 0 <= student_index < len(globals.waiting_list):
+        globals.waiting_list.pop(student_index)
+        if globals.current_index > student_index:
+            globals.current_index -= 1
+
+    return redirect(url_for("admin"))
+
+@app.route("/prioritize_student")
+@login_required
+def prioritize_student():
+    student_index = int(request.args.get('student_index'))
+
+    if 0 <= student_index < len(globals.waiting_list):
+        moved_student = globals.waiting_list.pop(student_index)
+        if globals.current_index > student_index:
+            globals.current_index -= 1
+        
+        globals.priority_list.append(moved_student)
+
+    return redirect(url_for("admin"))
+
+@app.route("/delete_prioritized_student")
+@login_required
+def delete_prioritized_student():
+    student_index = int(request.args.get('student_index'))
+
+    if 0 <= student_index < len(globals.priority_list):
+        globals.priority_list.pop(student_index)
+    
+    return redirect(url_for("admin"))
+
 
 @app.route("/server_toggle")
 @login_required
@@ -136,4 +178,4 @@ def server_toggle():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=443, debug=True)

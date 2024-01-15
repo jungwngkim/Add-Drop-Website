@@ -8,8 +8,8 @@ import smtplib
 class EmailType(Enum):
     ON_REGISTER = 0
     ON_FIRST = 1
-    ON_FIFTH = 2
-    # ON_EMERGENCY
+    ON_TENTH = 2
+    ON_EMERGENCY = 3
 
 port = 465
 
@@ -28,7 +28,7 @@ Subject: {subject}
 
 
 # https://realpython.com/python-send-email/
-def send_email(student: Student, email_type: EmailType):
+def send_email(student: Student, email_type: EmailType, content: str):
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
         server.login(globals.google_id, globals.google_password)
 
@@ -39,21 +39,21 @@ def send_email(student: Student, email_type: EmailType):
                 message = message_template.format(
                     sender_email=globals.google_id,
                     subject='Registration Success',
-                    content='Registration Success',
+                    content=content,
                     student_description=student_description
                 )
             case EmailType.ON_FIRST:
                 message = message_template.format(
                     sender_email=globals.google_id,
                     subject='Enter Office',
-                    content='Enter Office',
-                    student_description=student_description
+                    content=content,
+                    student_dscription=student_description
                 )
-            case EmailType.ON_FIFTH:
+            case EmailType.ON_TENTH:
                 message = message_template.format(
                     sender_email=globals.google_id,
                     subject='Wait in front',
-                    content='Wait in front',
+                    content=content,
                     student_description=student_description
                 )
         

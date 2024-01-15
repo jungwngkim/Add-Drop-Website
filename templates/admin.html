@@ -6,11 +6,21 @@ Admin
 
 {% block content %}
 <div class="row" style="height: 100vh;">
-    <div class="col-6" style="height: 100%; overflow: auto;">
+    <div class="col-4" style="height: 100%; overflow: auto;">
+        <div class="w-75 mx-auto pt-5">
+            <h1>Waiting List</h1>
+        </div>
         {% include 'shared/student_list.html' %}
     </div>
-    
-    <div class="col-6" style="display: flex; align-items: center;">
+
+    <div class="col-4" style="height: 100%; overflow: auto;">
+        <div class="w-75 mx-auto pt-5">
+            <h1>Priority Line</h1>
+        </div>
+        {% include 'shared/priority_student_list.html' %}
+    </div>
+
+    <div class="col-4" style="display: flex; align-items: center;">
         <div class="card p-5 mx-auto">
             <div class="card-body">
                 <h1>Admin Menu</h1>

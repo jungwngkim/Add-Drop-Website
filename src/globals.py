@@ -10,10 +10,18 @@ server_is_open = False
 waiting_list = []
 current_index = 0
 
+priority_list = []
+
 # get environment variable for password
-password = os.environ.get('APP_PASSWORD')
+password = [os.environ.get('APP_PASSWORD_1'), os.environ.get('APP_PASSWORD_2')]
 google_password = os.environ.get('GOOGLE_PASSWORD')
 google_id = os.environ.get('GOOGLE_ID')
 
-session = None
+print(password)
+
+# 2 user
+session = [None, None]
 session_key = 'session'
+
+# student id set
+register_id_set = set()
