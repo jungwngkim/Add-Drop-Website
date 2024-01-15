@@ -44,7 +44,7 @@ def register():
             return render_template("register.html", error_text="Already Registered")
 
         globals.waiting_list.append(new_student)
-        send_email(new_student, EmailType.ON_REGISTER, 'Successful Registration')
+        send_email(new_student, EmailType.ON_REGISTER, f'Successful Registration. (Registration #{new_student.register_id})')
 
         return redirect(url_for("waiting_list_screen"))
 
