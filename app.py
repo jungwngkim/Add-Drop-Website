@@ -43,8 +43,13 @@ def register():
         if new_student in globals.waiting_list:
             return render_template("register.html", error_text="Already Registered")
 
+        new_student_index = len(globals.waiting_list)
+
         globals.waiting_list.append(new_student)
         send_email(new_student, EmailType.ON_REGISTER, f'Successful Registration. (Registration #{new_student.register_id})')
+
+        if new_student_index < 10:
+            send_email(new_student, EmailType.ON_TENTH, f'You registered in {new_student_index + 1} position. Please come to the office.')
 
         return redirect(url_for("waiting_list_screen"))
 
@@ -155,6 +160,7 @@ def prioritize_student():
             globals.current_index -= 1
         
         globals.priority_list.append(moved_student)
+        send_email(moved_student, EmailType.ON_EMERGENCY, f'Emergency call from Administrator. Please return to the office.')
 
     return redirect(url_for("admin"))
 
@@ -178,4 +184,5 @@ def server_toggle():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=443, debug=True)
+
