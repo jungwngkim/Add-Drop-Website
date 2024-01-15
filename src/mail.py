@@ -56,5 +56,12 @@ def send_email(student: Student, email_type: EmailType, content: str):
                     content=content,
                     student_description=student_description
                 )
+            case EmailType.ON_EMERGENCY:
+                message = message_template.format(
+                    sender_email=globals.google_id,
+                    subject='Come to the office (Emergency)',
+                    content=content,
+                    student_description=student_description
+                )
         
         server.sendmail(globals.google_id, student.email, message)
