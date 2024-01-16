@@ -43,7 +43,7 @@ def register():
         if new_student in globals.waiting_list:
             return render_template("register.html", error_text="Already Registered")
 
-        new_student_index = len(globals.waiting_list)
+        new_student_index = len(globals.waiting_list) - globals.current_index
 
         globals.waiting_list.append(new_student)
         send_email(new_student, EmailType.ON_REGISTER, f'Successful Registration. (Registration #{new_student.register_id})')
