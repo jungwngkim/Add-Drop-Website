@@ -144,7 +144,16 @@ def delete_student():
 
     if 0 <= student_index < len(globals.waiting_list):
         globals.waiting_list.pop(student_index)
-        if globals.current_index > student_index:
+
+        relative_index =  student_index - globals.current_index
+        if relative_index == 0:
+            send_email(globals.waiting_list[globals.current_index], EmailType.ON_FIRST, 'You are in First place in waiting line.')
+
+        if 1 <= relative_index <= 9:
+            if globals.current_index + 10 < len(globals.waiting_list):
+                send_email(globals.waiting_list[globals.current_index + 10], EmailType.ON_TENTH, 'You are in Tenth place in waiting line.')
+
+        if relative_index < 0:
             globals.current_index -= 1
 
     return redirect(url_for("admin"))
@@ -156,7 +165,16 @@ def prioritize_student():
 
     if 0 <= student_index < len(globals.waiting_list):
         moved_student = globals.waiting_list.pop(student_index)
-        if globals.current_index > student_index:
+        
+        relative_index =  student_index - globals.current_index
+        if relative_index == 0:
+            send_email(globals.waiting_list[globals.current_index], EmailType.ON_FIRST, 'You are in First place in waiting line.')
+
+        if 1 <= relative_index <= 9:
+            if globals.current_index + 10 < len(globals.waiting_list):
+                send_email(globals.waiting_list[globals.current_index + 10], EmailType.ON_TENTH, 'You are in Tenth place in waiting line.')
+
+        if relative_index < 0:
             globals.current_index -= 1
         
         globals.priority_list.append(moved_student)
@@ -185,4 +203,3 @@ def server_toggle():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80)
-
