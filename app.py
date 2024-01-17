@@ -143,7 +143,6 @@ def delete_student():
     student_index = int(request.args.get('student_index'))
 
     if 0 <= student_index < len(globals.waiting_list):
-        globals.waiting_list.pop(student_index)
 
         relative_index =  student_index - globals.current_index
         if relative_index == 0:
@@ -155,6 +154,7 @@ def delete_student():
 
         if relative_index < 0:
             globals.current_index -= 1
+        globals.waiting_list.pop(student_index)
 
     return redirect(url_for("admin"))
 
@@ -164,7 +164,7 @@ def prioritize_student():
     student_index = int(request.args.get('student_index'))
 
     if 0 <= student_index < len(globals.waiting_list):
-        moved_student = globals.waiting_list.pop(student_index)
+        
         
         relative_index =  student_index - globals.current_index
         if relative_index == 0:
@@ -176,7 +176,7 @@ def prioritize_student():
 
         if relative_index < 0:
             globals.current_index -= 1
-        
+        moved_student = globals.waiting_list.pop(student_index)
         globals.priority_list.append(moved_student)
         send_email(moved_student, EmailType.ON_EMERGENCY, f'Emergency call from Administrator. Please return to the office.')
 
