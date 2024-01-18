@@ -24,6 +24,7 @@ Subject: {subject}
 --------------------
 
 {content}
+You must check with your current teacher before coming down to the office. There is no add /drop during lunch
 """
 
 
