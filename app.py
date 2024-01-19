@@ -15,7 +15,8 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template('index.html')
+    return render_template("index.html")
+
 
 # ==== Student only ==== #
 
@@ -24,14 +25,14 @@ def index():
 @server_open_required
 def register():
     if request.method == "GET":
-        return render_template('register.html')
+        return render_template("register.html")
     else:
         email, name, grade = (
             request.form["student-email"],
             request.form["student-name"],
             request.form["student-grade"],
         )
-        email_regex = r"s\d{5,10}@sjajeju.kr$"
+        email_regex = r"s\d{8}@sjajeju.kr$"
 
         result = re.match(email_regex, email)
 
@@ -46,10 +47,18 @@ def register():
         new_student_index = len(globals.waiting_list) - globals.current_index
 
         globals.waiting_list.append(new_student)
-        send_email(new_student, EmailType.ON_REGISTER, f'Successful Registration. (Registration #{new_student.register_id})')
+        send_email(
+            new_student,
+            EmailType.ON_REGISTER,
+            f"Successful Registration. (Registration #{new_student.register_id})",
+        )
 
         if new_student_index < 10:
-            send_email(new_student, EmailType.ON_TENTH, f'You registered in {new_student_index + 1} position. Please come to the office.')
+            send_email(
+                new_student,
+                EmailType.ON_TENTH,
+                f"You registered in position {new_student_index + 1}. Please come to the office.",
+            )
 
         return redirect(url_for("waiting_list_screen"))
 
@@ -57,10 +66,10 @@ def register():
 @app.route("/waiting-list-screen")
 @server_open_required
 def waiting_list_screen():
-    print(globals.waiting_list[globals.current_index:])
+    print(globals.waiting_list[globals.current_index :])
     return render_template(
-        'waiting_list.html',
-        waiting_list=globals.waiting_list[globals.current_index:],
+        "waiting_list.html",
+        waiting_list=globals.waiting_list[globals.current_index :],
         priority_list=globals.priority_list,
         current_index=0,
     )
@@ -70,9 +79,9 @@ def waiting_list_screen():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template('login.html')
+        return render_template("login.html")
     else:
-        password = request.form['teacher-password']
+        password = request.form["teacher-password"]
 
         if password in globals.password:
             index = globals.password.index(password)
@@ -80,13 +89,13 @@ def login():
 
             globals.session[index] = new_session
 
-            print(f'new session: {new_session}')
+            print(f"new session: {new_session}")
 
-            res = make_response(redirect(url_for('admin')))
+            res = make_response(redirect(url_for("admin")))
             res.set_cookie(globals.session_key, new_session)
             return res
         else:
-            return render_template('login.html', error_text='Wrong Password')
+            return render_template("login.html", error_text="Wrong Password")
 
 
 @app.get("/admin")
@@ -111,11 +120,19 @@ def next_student():
         globals.current_index += 1
 
         # send email to first student
-        send_email(globals.waiting_list[globals.current_index], EmailType.ON_FIRST, 'You are in First place in waiting line.')
+        send_email(
+            globals.waiting_list[globals.current_index],
+            EmailType.ON_FIRST,
+            "You are in First place in waiting line.",
+        )
 
         # send email to tenth student, if exists
         if globals.current_index + 9 <= max_index:
-            send_email(globals.waiting_list[globals.current_index + 9], EmailType.ON_TENTH, 'You are in Tenth place in waiting line.')
+            send_email(
+                globals.waiting_list[globals.current_index + 9],
+                EmailType.ON_TENTH,
+                "You are in Tenth place in waiting line.",
+            )
 
     return redirect(url_for("admin"))
 
@@ -132,64 +149,71 @@ def delete_all_student():
 @app.route("/delete_visited_student")
 @login_required
 def delete_visited_student():
-    globals.waiting_list = globals.waiting_list[globals.current_index:]
+    globals.waiting_list = globals.waiting_list[globals.current_index :]
     globals.current_index = 0
 
     return redirect(url_for("admin"))
 
+def mail_on_delete(student_index):
+    should_mail = globals.current_index <= student_index <= globals.current_index + 9
+    should_mail_first = globals.current_index == student_index
+
+    if student_index < globals.current_index:
+        globals.current_index -= 1
+
+    if should_mail_first:
+        send_email(
+            globals.waiting_list[globals.current_index],
+            EmailType.ON_FIRST,
+            "You are in First place in waiting line.",
+        )
+
+    if should_mail and globals.current_index + 9 < len(globals.waiting_list):
+        send_email(
+            globals.waiting_list[globals.current_index + 9],
+            EmailType.ON_TENTH,
+            "You are in Tenth place in waiting line.",
+        )
+
 @app.route("/delete_student")
 @login_required
 def delete_student():
-    student_index = int(request.args.get('student_index'))
+    student_index = int(request.args.get("student_index"))
 
     if 0 <= student_index < len(globals.waiting_list):
-
-        relative_index =  student_index - globals.current_index
-        if relative_index == 0:
-            send_email(globals.waiting_list[globals.current_index], EmailType.ON_FIRST, 'You are in First place in waiting line.')
-
-        if 1 <= relative_index <= 9:
-            if globals.current_index + 10 < len(globals.waiting_list):
-                send_email(globals.waiting_list[globals.current_index + 10], EmailType.ON_TENTH, 'You are in Tenth place in waiting line.')
-
-        if relative_index < 0:
-            globals.current_index -= 1
         globals.waiting_list.pop(student_index)
+        mail_on_delete(student_index)
 
     return redirect(url_for("admin"))
+
 
 @app.route("/prioritize_student")
 @login_required
 def prioritize_student():
-    student_index = int(request.args.get('student_index'))
+    student_index = int(request.args.get("student_index"))
 
     if 0 <= student_index < len(globals.waiting_list):
-        
-        
-        relative_index =  student_index - globals.current_index
-        if relative_index == 0:
-            send_email(globals.waiting_list[globals.current_index], EmailType.ON_FIRST, 'You are in First place in waiting line.')
-
-        if 1 <= relative_index <= 9:
-            if globals.current_index + 10 < len(globals.waiting_list):
-                send_email(globals.waiting_list[globals.current_index + 10], EmailType.ON_TENTH, 'You are in Tenth place in waiting line.')
-
-        if relative_index < 0:
-            globals.current_index -= 1
         moved_student = globals.waiting_list.pop(student_index)
+        mail_on_delete(student_index)
+
         globals.priority_list.append(moved_student)
-        send_email(moved_student, EmailType.ON_EMERGENCY, f'Emergency call from Administrator. Please return to the office.')
+        send_email(
+            moved_student,
+            EmailType.ON_EMERGENCY,
+            f"Emergency call from Administrator. Please return to the office.",
+        )
 
     return redirect(url_for("admin"))
+
 
 @app.route("/delete_prioritized_student")
 @login_required
 def delete_prioritized_student():
-    student_index = int(request.args.get('student_index'))
+    student_index = int(request.args.get("student_index"))
 
     if 0 <= student_index < len(globals.priority_list):
         globals.priority_list.pop(student_index)
-    
+
     return redirect(url_for("admin"))
 
 
@@ -202,4 +226,4 @@ def server_toggle():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80)
+    app.run(host="0.0.0.0", port=80)
