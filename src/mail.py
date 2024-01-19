@@ -53,7 +53,7 @@ def send_email(student: Student, email_type: EmailType, content: str):
             case EmailType.ON_TENTH:
                 message = message_template.format(
                     sender_email=globals.google_id,
-                    subject='Wait in front',
+                    subject='Lineup in the office',
                     content=content,
                     student_description=student_description
                 )
