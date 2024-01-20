@@ -66,10 +66,10 @@ def register():
 @app.route("/waiting-list-screen")
 @server_open_required
 def waiting_list_screen():
-    print(globals.waiting_list[globals.current_index :])
+    print(globals.waiting_list[globals.current_index:])
     return render_template(
         "waiting_list.html",
-        waiting_list=globals.waiting_list[globals.current_index :],
+        waiting_list=globals.waiting_list[globals.current_index:],
         priority_list=globals.priority_list,
         current_index=0,
     )
@@ -149,7 +149,7 @@ def delete_all_student():
 @app.route("/delete_visited_student")
 @login_required
 def delete_visited_student():
-    globals.waiting_list = globals.waiting_list[globals.current_index :]
+    globals.waiting_list = globals.waiting_list[globals.current_index:]
     globals.current_index = 0
 
     return redirect(url_for("admin"))
