@@ -154,19 +154,22 @@ def delete_visited_student():
 
     return redirect(url_for("admin"))
 
+
 def mail_on_delete(student_index):
     should_mail = globals.current_index <= student_index <= globals.current_index + 9
     should_mail_first = globals.current_index == student_index
 
+    print(f'idx: {student_index}, curr_idx: {globals.current_index}')
+
     if student_index < globals.current_index:
         globals.current_index -= 1
 
-    if should_mail_first:
-        send_email(
-            globals.waiting_list[globals.current_index],
-            EmailType.ON_FIRST,
-            "You are in First place in waiting line.",
-        )
+    if should_mail_first and globals.current_index < len(globals.waiting_list):
+            send_email(
+                globals.waiting_list[globals.current_index],
+                EmailType.ON_FIRST,
+                "You are in First place in waiting line.",
+            )
 
     if should_mail and globals.current_index + 9 < len(globals.waiting_list):
         send_email(
@@ -174,6 +177,7 @@ def mail_on_delete(student_index):
             EmailType.ON_TENTH,
             "You are in Tenth place in waiting line.",
         )
+
 
 @app.route("/delete_student")
 @login_required
