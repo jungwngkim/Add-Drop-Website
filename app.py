@@ -32,7 +32,7 @@ def register():
             request.form["student-name"],
             request.form["student-grade"],
         )
-        email_regex = r"s\d{8}@sjajeju.kr$"
+        email_regex = r"s\d{5,10}@sjajeju.kr$"
 
         result = re.match(email_regex, email)
 
