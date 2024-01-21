@@ -4,7 +4,10 @@
         {{'text-bg-secondary' if (loop.index < (current_index + 1))}}
     ">
     <div class="card-body">
-        <h5 class="card-title">#{{ student.register_id }}</h5>
+         <h5 class="card-title">[{{ loop.index }}] #{{ student.register_id }}</h5>
+         {% if admin %}
+             <p class="card-text">{{ student.name }}, {{ student.grade }}, {{ student.email }}</p>
+             <div class="btn-group" role="group">
         {% if admin %}
             <p class="card-text">{{ student.name }}, {{ student.grade }}, {{ student.email }}</p>
             <div class="btn-group" role="group">
