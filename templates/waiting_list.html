@@ -34,34 +34,3 @@ Index
 </div>
 
 {% endblock %}
-{% endblock %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    // waiting list 페이지 업데이트 함수
-    function updatePage() {
-        $.ajax({
-            url: '/waiting-list-screen', // Flask 엔드포인트 URL
-            type: 'GET',
-            success: function(data) {
-                // 업데이트된 admin 페이지를 받아서 전체 페이지를 교체
-                $('html').html(data);
-            },
-            error: function(error) {
-                console.error('Error updating admin page:', error);
-            }
-        });
-    }
-
-    // 페이지 로드 시 admin 페이지 업데이트 호출
-    $(document).ready(function() {
-        updatePage();
-    });
-
-    // 일정 간격으로 admin 페이지 업데이트 호출
-    setInterval(updatePage, 5000); // 5초마다 업데이트 (원하는 간격으로 조절 가능)
-</script>
-
-
-{% endblock %}
-
-richm@DESKTOPxxxx MINGW64 /c/dev/Add-Drop-Website_new (main)
