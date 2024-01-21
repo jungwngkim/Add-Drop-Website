@@ -1,8 +1,8 @@
 {% for student in waiting_list %}
 <div class="card my-3 w-75 mx-auto
-        {{'text-bg-primary' if (loop.index == (current_index + 1))}}
-        {{'text-bg-secondary' if (loop.index < (current_index + 1))}}
-    ">
+    {{'text-bg-primary' if (loop.index == (current_index + 1))}}
+    {{'text-bg-secondary' if (loop.index < (current_index + 1))}}
+">
     <div class="card-body">
         <h5 class="card-title">#{{ student.register_id }}</h5>
         {% if admin %}
@@ -15,3 +15,8 @@
     </div>
 </div>
 {% endfor %}
+
+<!-- Add the following line -->
+<h5 class="card-title">[{{ loop.index }}] #{{ student.register_id }}</h5>
+
+<!-- existing code ... -->
