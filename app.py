@@ -47,21 +47,24 @@ def register():
         new_student_index = len(globals.waiting_list) - globals.current_index
 
         globals.waiting_list.append(new_student)
-        send_email(
-            new_student,
-            EmailType.ON_REGISTER,
-            f"Successful Registration. (Registration #{new_student.register_id})",
+        # send_email(
+        #     new_student,
+        #     EmailType.ON_REGISTER,
+        #     f"Successful Registration. (Registration #{new_student.register_id})",
+        # )
+
+        # if new_student_index < 10:
+        #     send_email(
+        #         new_student,
+        #         EmailType.ON_TENTH,
+        #         f"You registered in position {new_student_index + 1}. Please come to the office.",
+        #     )
+
+        return render_template(
+            "register_success.html",
+            student=new_student,
+            student_index=new_student_index+1
         )
-
-        if new_student_index < 10:
-            send_email(
-                new_student,
-                EmailType.ON_TENTH,
-                f"You registered in position {new_student_index + 1}. Please come to the office.",
-            )
-
-        return redirect(url_for("waiting_list_screen"))
-
 
 @app.route("/waiting-list-screen")
 @server_open_required
@@ -120,19 +123,19 @@ def next_student():
         globals.current_index += 1
 
         # send email to first student
-        send_email(
-            globals.waiting_list[globals.current_index],
-            EmailType.ON_FIRST,
-            "You are in First place in waiting line.",
-        )
+        # send_email(
+        #     globals.waiting_list[globals.current_index],
+        #     EmailType.ON_FIRST,
+        #     "You are in First place in waiting line.",
+        # )
 
         # send email to tenth student, if exists
-        if globals.current_index + 9 <= max_index:
-            send_email(
-                globals.waiting_list[globals.current_index + 9],
-                EmailType.ON_TENTH,
-                "You are in Tenth place in waiting line.",
-            )
+        # if globals.current_index + 9 <= max_index:
+        #     send_email(
+        #         globals.waiting_list[globals.current_index + 9],
+        #         EmailType.ON_TENTH,
+        #         "You are in Tenth place in waiting line.",
+        #     )
 
     return redirect(url_for("admin"))
 
@@ -156,27 +159,27 @@ def delete_visited_student():
 
 
 def mail_on_delete(student_index):
-    should_mail = globals.current_index <= student_index <= globals.current_index + 9
-    should_mail_first = globals.current_index == student_index
+    # should_mail = globals.current_index <= student_index <= globals.current_index + 9
+    # should_mail_first = globals.current_index == student_index
 
     print(f'idx: {student_index}, curr_idx: {globals.current_index}')
 
     if student_index < globals.current_index:
         globals.current_index -= 1
 
-    if should_mail_first and globals.current_index < len(globals.waiting_list):
-            send_email(
-                globals.waiting_list[globals.current_index],
-                EmailType.ON_FIRST,
-                "You are in First place in waiting line.",
-            )
+    # if should_mail_first and globals.current_index < len(globals.waiting_list):
+    #         send_email(
+    #             globals.waiting_list[globals.current_index],
+    #             EmailType.ON_FIRST,
+    #             "You are in First place in waiting line.",
+    #         )
 
-    if should_mail and globals.current_index + 9 < len(globals.waiting_list):
-        send_email(
-            globals.waiting_list[globals.current_index + 9],
-            EmailType.ON_TENTH,
-            "You are in Tenth place in waiting line.",
-        )
+    # if should_mail and globals.current_index + 9 < len(globals.waiting_list):
+    #     send_email(
+    #         globals.waiting_list[globals.current_index + 9],
+    #         EmailType.ON_TENTH,
+    #         "You are in Tenth place in waiting line.",
+    #     )
 
 
 @app.route("/delete_student")
@@ -201,11 +204,11 @@ def prioritize_student():
         mail_on_delete(student_index)
 
         globals.priority_list.append(moved_student)
-        send_email(
-            moved_student,
-            EmailType.ON_EMERGENCY,
-            f"Emergency call from Administrator. Please return to the office.",
-        )
+        # send_email(
+        #     moved_student,
+        #     EmailType.ON_EMERGENCY,
+        #     f"Emergency call from Administrator. Please return to the office.",
+        # )
 
     return redirect(url_for("admin"))
 

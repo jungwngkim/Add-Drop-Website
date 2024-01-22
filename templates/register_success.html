@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Registration Success
+{% endblock %}
+
+{% block content %}
+<div class="card mx-auto w-50 mt-5">
+    <div class="card-body">
+        <h3 class="card-title">Registration Success</h3>
+        <p class="card-text">Capture this screen for verification.</p>
+        <p class="card-text">Student Info: {{ student.name }} | Grade {{ student.grade }} | {{ student.email }}</p>
+        <p class="card-text">
+            You registered in position {{student_index}}. Please check <a href="{{url_for('waiting_list_screen')}}">here</a> for updates.
+        </p>
+    </div>
+</div>
+{% endblock %}
